@@ -1,57 +1,74 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { withFormik, Form, Field } from "formik";
-import axios from "axios";
 import * as Yup from "yup";
+import axios from "axios";
 
-class UserForm extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    return (
-      <div className="form">
-        <h3>User Form</h3>
-        <Form>
-          <label htmlFor="username">Username: </label>
-          <Field type="text" name="username" placeholder="Enter Username" />
-          {this.props.touched.username && this.props.errors.username && (
-            <p>{this.props.errors.username}</p>
-          )}
-          <label htmlFor="password">Password: </label>
-          <Field type="password" name="password" placeholder="Enter Password" />
-          {this.props.touched.password && this.props.errors.password && (
-            <p>{this.props.errors.password}</p>
-          )}
-          <button>Submit</button>
-        </Form>
+function UserForm({ errors, touched, isSubmitting, status }) {
+  const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    if (status) {
+      setUserData([...userData, status]);
+    }
+  }, [userData]);
+
+  return (
+    <div>
+      <h3>Sign Up</h3>
+      <Form>
+        <div>
+          {touched.username && errors.username && <p>{errors.username}</p>}
+          <Field type="username" name="username" placeholder="username" />
+        </div>
+        <div>
+          {touched.password && errors.password && <p>{errors.password}</p>}
+          <Field type="password" name="password" placeholder="Password" />
+        </div>
+        <button type="submit" disabled={isSubmitting}>
+          Submit
+        </button>
+      </Form>
+
+      <div>
+        {userData.map((user, index) => (
+          <div key={index}>
+            <h2>User Information</h2>
+            <h4>username: {user.username}</h4>
+          </div>
+        ))}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-export default withFormik({
-  mapPropsToValues: () => {
+const FormikUserForm = withFormik({
+  mapPropsToValues({ username, password }) {
     return {
-      username: "",
-      password: ""
+      username: username || "",
+      password: password || ""
     };
   },
-
-  handleSubmit: (values, formikBag) => {
-    console.log(formikBag);
-
-    const url = "http://localhost:5000/api/register";
-    axios
-      .post(url, values)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => console.log(err.response));
-  },
   validationSchema: Yup.object().shape({
-    username: Yup.string().required("Password is required"),
+    username: Yup.string().required("Your name is required"),
     password: Yup.string()
       .min(6)
       .required("Password is required")
-  })
+  }),
+  handleSubmit(values, { resetForm, setSubmitting, setStatus }) {
+    console.log(values);
+    axios
+      .post("http://localhost:5000/api/register", values)
+      .then(res => {
+        console.log(res);
+        setStatus(res.data);
+        resetForm();
+        setSubmitting(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setSubmitting(false);
+      });
+  }
 })(UserForm);
+
+export default FormikUserForm;
