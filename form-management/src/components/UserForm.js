@@ -26,6 +26,17 @@ export default withFormik({
       username: "",
       password: ""
     };
+  },
+
+  handleSubmit: (values, formikBag) => {
+    console.log(formikBag);
+
+    const url = "http://localhost:5000/api/register";
+    axios
+      .post(url, values)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err.response));
   }
-});
-UserForm;
+})(UserForm);
