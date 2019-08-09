@@ -38,5 +38,11 @@ export default withFormik({
         console.log(res);
       })
       .catch(err => console.log(err.response));
-  }
+  },
+  validationSchema: Yup.object().shape({
+    username: Yup.string().required("Password is required"),
+    password: Yup.string()
+      .min(6)
+      .required("Password is required")
+  })
 })(UserForm);
