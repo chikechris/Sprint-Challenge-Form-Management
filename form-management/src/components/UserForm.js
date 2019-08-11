@@ -35,6 +35,7 @@ const FormStyle = styled.div`
     border-radius: 5px;
   }
   h3 {
+    font-size: 2rem;
     font-family: "Serif ", "Georgia ";
     text-shadow: 0 0 1px #1ab31a; 0 0 2px #1ab31a;
   }
@@ -50,7 +51,7 @@ const FormStyle = styled.div`
     border-bottom: 2px solid #282c34;
     padding: 10px;
     color: "white";
-    width: 80%;
+    width: 100%;
   }
 
   button {
@@ -77,12 +78,12 @@ function UserForm({ errors, touched, isSubmitting, status }) {
 
   return (
     <div>
-      <h3>Sign Up</h3>
       <FormStyle>
+        <h3>Sign Up</h3>
         <Form>
           <div>
             {touched.username && errors.username && <p>{errors.username}</p>}
-            <Field type="username" name="username" placeholder="username" />
+            <Field type="username" name="username" placeholder="Name" />
           </div>
           <div>
             {touched.password && errors.password && <p>{errors.password}</p>}
